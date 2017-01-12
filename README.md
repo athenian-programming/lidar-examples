@@ -14,3 +14,17 @@
 * The VL53L0X can be purchased [here](https://www.adafruit.com/products/3317).
 
 * The tutorial is [here](https://learn.adafruit.com/adafruit-vl53l0x-micro-lidar-distance-sensor-breakout).
+
+
+
+### Usage 
+
+```bash
+$ lidar_lite_serial.py --port cu.usbmodem1451 
+```
+
+### CLI Options
+
+| Option         | Description                                        | Default |
+|:---------------|----------------------------------------------------|---------|
+| -s, --serial   | Arduino serial port                                | ttyACM0 |
