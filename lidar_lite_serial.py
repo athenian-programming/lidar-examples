@@ -24,14 +24,19 @@ if __name__ == "__main__":
         print(e)
         sys.exit(0)
 
-    while True:
-        try:
-            bytes = ser.readline()[:-2]
-            s = bytes.decode("utf-8")
-            tup = eval(s)
-            cms = int(tup[0])
-            inches = float(tup[1])
-            print(str(cms) + " : " + str(inches))
-        except BaseException as e:
-            print(e)
-            time.sleep(1)
+    try:
+        while True:
+            try:
+                bytes = ser.readline()[:-2]
+                s = bytes.decode("utf-8")
+                tup = eval(s)
+                cms = int(tup[0])
+                inches = float(tup[1])
+                print(str(cms) + " : " + str(inches))
+            except BaseException as e:
+                print(e)
+                time.sleep(1)
+    except KeyboardInterrupt:
+        print("Exiting...")
+    finally:
+        ser.close()
