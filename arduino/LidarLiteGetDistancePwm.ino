@@ -21,10 +21,11 @@ void loop() {
 
   if(pulseWidth != 0) {
     pulseWidth = pulseWidth / 10; // 10usec = 1 cm of distance
-    if (pulseWidth != 0 && lastVal != pulseWidth)
+    if (pulseWidth != 0 && lastVal != pulseWidth) {
       Serial.println("(" + String(pulseWidth) + ", " + String(pulseWidth * 0.393701) + ")");
+      delay(250);
+   }
   }
 
   lastVal = pulseWidth;
-  delay(250);
 }
