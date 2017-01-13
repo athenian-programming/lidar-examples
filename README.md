@@ -18,7 +18,7 @@
 
 ## Plot.ly
 
-Details on setting up plt.ly are 
+Details on setting up plot.ly are 
 [here](http://www.athenian-robotics.org/site/plotly/).
 
 ### Usage 
