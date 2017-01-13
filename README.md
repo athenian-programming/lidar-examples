@@ -16,6 +16,10 @@
 * The tutorial is [here](https://learn.adafruit.com/adafruit-vl53l0x-micro-lidar-distance-sensor-breakout).
 
 
+## Plot.ly
+
+Details on setting up plt.ly are 
+[here](http://www.athenian-robotics.org/site/plotly/).
 
 ### Usage 
 
