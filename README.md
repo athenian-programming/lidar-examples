@@ -1,11 +1,7 @@
 # Lidar Examples
 
-## Installation
 
-Instal pyserial with:
-```bash
-$ pip install pyserial
-```
+Requires [pyserial](/pyserial) and [plot.ly](/plotly/) packages to be installed.
 
 ## Garmin Lidar Lite v3
 
@@ -22,11 +18,6 @@ $ pip install pyserial
 
 * The tutorial is [here](https://learn.adafruit.com/adafruit-vl53l0x-micro-lidar-distance-sensor-breakout).
 
-
-## Plot.ly
-
-Details on setting up plot.ly are 
-[here](http://www.athenian-robotics.org/plotly/).
 
 ### Usage 
 
