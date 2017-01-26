@@ -6,17 +6,20 @@ import sys
 import time
 
 import serial
+from common_constants import LOGGING_ARGS
+from common_utils import is_windows
 
 if __name__ == "__main__":
+    # Set up CLI
     parser = argparse.ArgumentParser()
     parser.add_argument("-s", "--serial", default="ttyACM0", type=str,
-                        help="Arduino serial port [ttyACM0] (OSX is cu.usbmodemXXXX)")
+                        help="Arduino serial port [ttyACM0] (OSX is cu.usbmodemXXXX Windows is COMX)")
     args = vars(parser.parse_args())
 
-    logging.basicConfig(stream=sys.stderr, level=logging.INFO,
-                        format="%(asctime)s %(name)-10s %(funcName)-10s():%(lineno)i: %(levelname)-6s %(message)s")
+    # Setup logging
+    logging.basicConfig(**LOGGING_ARGS)
 
-    port = "/dev/" + args["serial"]
+    port = "/dev/" if not is_windows() else "" + args["serial"]
 
     try:
         ser = serial.Serial(port=port, baudrate=115200)

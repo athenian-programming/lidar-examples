@@ -8,6 +8,8 @@ import plotly.graph_objs as go
 import plotly.plotly as py
 import plotly.tools as tls
 import serial
+from common_constants import LOGGING_ARGS
+from common_utils import is_windows
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -15,8 +17,10 @@ if __name__ == "__main__":
                         help="Arduino serial port [ttyACM0] (OSX is cu.usbmodemXXXX)")
     args = vars(parser.parse_args())
 
-    logging.basicConfig(stream=sys.stderr, level=logging.INFO,
-                        format="%(asctime)s %(name)-10s %(funcName)-10s():%(lineno)i: %(levelname)-6s %(message)s")
+    # Setup logging
+    logging.basicConfig(**LOGGING_ARGS)
+
+    port = "/dev/" if not is_windows() else "" + args["serial"]
 
     stream_ids = tls.get_credentials_file()['stream_ids']
     stream_id = stream_ids[0]
@@ -37,8 +41,6 @@ if __name__ == "__main__":
 
     logging.info("Opening plot.ly tab")
     time.sleep(5)
-
-    port = "/dev/" + args["serial"]
 
     try:
         serial = serial.Serial(port=port, baudrate=115200)

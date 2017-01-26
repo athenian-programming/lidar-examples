@@ -5,6 +5,8 @@ import logging
 import sys
 import time
 
+from common_constants import LOGGING_ARGS
+from common_utils import is_windows
 from pyfirmata import Arduino
 from pyfirmata import INPUT
 
@@ -14,11 +16,12 @@ if __name__ == "__main__":
                         help="Arduino serial port [ttyACM0] (OSX is cu.usbmodemXXXX)")
     args = vars(parser.parse_args())
 
-    logging.basicConfig(stream=sys.stderr, level=logging.INFO,
-                        format="%(asctime)s %(name)-10s %(funcName)-10s():%(lineno)i: %(levelname)-6s %(message)s")
+    # Setup logging
+    logging.basicConfig(**LOGGING_ARGS)
 
     # Setup firmata client
-    port = "/dev/" + args["serial"]
+    port = "/dev/" if not is_windows() else "" + args["serial"]
+
     try:
         board = Arduino(port)
         logging.info("Connected to Arduino at: {0}".format(port))

@@ -1,5 +1,12 @@
 # Lidar Examples
 
+## Installation
+
+Instal pyserial with:
+```bash
+$ pip install pyserial
+```
+
 ## Garmin Lidar Lite v3
 
 * The Lidar Lite can be purchased [here](https://www.sparkfun.com/products/14032).
