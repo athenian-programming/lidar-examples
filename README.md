@@ -26,7 +26,7 @@ $ pip install pyserial
 ## Plot.ly
 
 Details on setting up plot.ly are 
-[here](http://www.athenian-robotics.org/site/plotly/).
+[here](http://www.athenian-robotics.org/plotly/).
 
 ### Usage 
 
