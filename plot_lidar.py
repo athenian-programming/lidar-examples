@@ -14,13 +14,18 @@ from common_utils import is_windows
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-s", "--serial", default="ttyACM0", type=str,
-                        help="Arduino serial port [ttyACM0] (OSX is cu.usbmodemXXXX Windows is COMX)")
+                        help="Arduino serial port [ttyACM0] (OSX is cu.usbmodemXXXX, Windows is COMX)")
     args = vars(parser.parse_args())
 
     # Setup logging
     logging.basicConfig(**LOGGING_ARGS)
 
-    port = "/dev/" if not is_windows() else "" + args["serial"]
+    try:
+        port = ("" if is_windows() else "/dev/") + args["serial"]
+        serial = serial.Serial(port=port, baudrate=115200)
+    except serial.serialutil.SerialException as e:
+        print(e)
+        sys.exit(0)
 
     stream_ids = tls.get_credentials_file()['stream_ids']
     stream_id = stream_ids[0]
@@ -42,11 +47,6 @@ if __name__ == "__main__":
     logging.info("Opening plot.ly tab")
     time.sleep(5)
 
-    try:
-        serial = serial.Serial(port=port, baudrate=115200)
-    except serial.serialutil.SerialException as e:
-        print(e)
-        sys.exit(0)
 
     try:
         while True:
@@ -61,7 +61,9 @@ if __name__ == "__main__":
                 print(e)
                 time.sleep(1)
     except KeyboardInterrupt:
-        print("Exiting...")
+        pass
     finally:
         stream.close()
         serial.close()
+
+    print("Exiting...")

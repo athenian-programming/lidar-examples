@@ -13,13 +13,13 @@ if __name__ == "__main__":
     # Set up CLI
     parser = argparse.ArgumentParser()
     parser.add_argument("-s", "--serial", default="ttyACM0", type=str,
-                        help="Arduino serial port [ttyACM0] (OSX is cu.usbmodemXXXX Windows is COMX)")
+                        help="Arduino serial port [ttyACM0] (OSX is cu.usbmodemXXXX, Windows is COMX)")
     args = vars(parser.parse_args())
 
     # Setup logging
     logging.basicConfig(**LOGGING_ARGS)
 
-    port = "/dev/" if not is_windows() else "" + args["serial"]
+    port = ("" if is_windows() else "/dev/") + args["serial"]
 
     try:
         ser = serial.Serial(port=port, baudrate=115200)

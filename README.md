@@ -1,7 +1,11 @@
 # Lidar Examples
 
 
-Requires [pyserial](/pyserial) and [plot.ly](/plotly/) packages to be installed.
+Requires the following Python packages to be installed:
+
+* [pyserial](http://www.athenian-robotics.org/pyserial/)  
+* [plot.ly](http://www.athenian-robotics.org/plotly/) 
+* [pyFirmata](http://www.athenian-robotics.org/pyfirmata/) 
 
 ## Garmin Lidar Lite v3
 
@@ -20,7 +24,6 @@ Requires [pyserial](/pyserial) and [plot.ly](/plotly/) packages to be installed.
 
 
 ### Usage 
-
 ```bash
 $ lidar_lite_serial.py --port cu.usbmodem1451 
 ```
