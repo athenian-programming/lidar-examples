@@ -13,7 +13,7 @@ from pyfirmata import INPUT
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-s", "--serial", default="ttyACM0", type=str,
-                        help="Arduino serial port [ttyACM0] (OSX is cu.usbmodemXXXX)")
+                        help="Arduino serial port [ttyACM0] (OSX is cu.usbmodemXXXX Windows is COMX)")
     args = vars(parser.parse_args())
 
     # Setup logging
