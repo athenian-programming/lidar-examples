@@ -13,6 +13,8 @@ import serial
 from common_constants import LOGGING_ARGS
 from common_utils import is_windows
 
+DEFAULT_BAUD = 115200
+
 
 class LidarReader(object):
     def __init__(self):
@@ -23,7 +25,7 @@ class LidarReader(object):
 
     # Read data from serial port and pass it along to the consumer
     # If the consumer runs slower than the producer, then values will be dropped
-    def produce_data(self, port, baudrate=115200):
+    def produce_data(self, port, baudrate):
         ser = None
         try:
             # Open serial port
@@ -75,8 +77,9 @@ class LidarReader(object):
                 traceback.print_exc()
                 time.sleep(1)
 
-    def start_producer(self, port, baudrate=115200):
-        Thread(target=self.produce_data, args=(port, baudrate)).start()
+    def start_producer(self, port, baudrate=DEFAULT_BAUD):
+        port_path = ("" if is_windows() else "/dev/") + port
+        Thread(target=self.produce_data, args=(port_path, baudrate)).start()
 
     def start_consumer(self, func):
         Thread(target=self.consume_data, args=(func,)).start()
@@ -90,7 +93,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-s", "--serial", default="ttyACM0", type=str,
                         help="Arduino serial port [ttyACM0] (OSX is cu.usbmodemXXXX, Windows is COMX)")
-    parser.add_argument("-b", "--baud", default=115200, type=int, help="Arduino serial port baud rate [115200]")
+    parser.add_argument("-b", "--baud", default=DEFAULT_BAUD, type=int,
+                        help="Arduino serial port baud rate [{0}]".format(DEFAULT_BAUD))
     args = vars(parser.parse_args())
 
     # Setup logging
@@ -110,8 +114,7 @@ if __name__ == "__main__":
     lidar.start_consumer(print_data)
 
     # Start producer thread
-    port = ("" if is_windows() else "/dev/") + args["serial"]
-    lidar.start_producer(port, baudrate=args["baud"])
+    lidar.start_producer(args["serial"], baudrate=args["baud"])
 
     # Wait for ctrl-C
     try:

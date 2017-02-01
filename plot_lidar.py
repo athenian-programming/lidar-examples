@@ -1,20 +1,22 @@
 import argparse
-import datetime
 import logging
 import time
+from datetime import datetime
 
 import plotly.graph_objs as go
 import plotly.plotly as py
 import plotly.tools as tls
 from common_constants import LOGGING_ARGS
-from common_utils import is_windows
 
+from lidar_reader import DEFAULT_BAUD
 from lidar_reader import LidarReader
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-s", "--serial", default="ttyACM0", type=str,
                         help="Arduino serial port [ttyACM0] (OSX is cu.usbmodemXXXX, Windows is COMX)")
+    parser.add_argument("-b", "--baud", default=DEFAULT_BAUD, type=int,
+                        help="Arduino serial port baud rate [{0}]".format(DEFAULT_BAUD))
     args = vars(parser.parse_args())
 
     # Setup logging
@@ -46,7 +48,7 @@ if __name__ == "__main__":
     def plot_data(tup):
         cms = int(tup[0])
         inches = float(tup[1])
-        x = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
+        x = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
         stream.write(dict(x=x, y=cms))
 
 
@@ -54,8 +56,7 @@ if __name__ == "__main__":
     lidar.start_consumer(plot_data)
 
     # Start producer thread
-    port = ("" if is_windows() else "/dev/") + args["serial"]
-    lidar.start_producer(port)
+    lidar.start_producer(args["serial"], baudrate=args["baud"])
 
     # Wait for ctrl-C
     try:
