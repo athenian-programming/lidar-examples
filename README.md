@@ -25,7 +25,11 @@ Requires the following Python packages to be installed:
 
 ### Usage 
 ```bash
-$ lidar_lite_serial.py --port cu.usbmodem1451 
+$ lidar_reader.py --port cu.usbmodem1451 
+```
+
+```bash
+$ plot_lidar.py --port cu.usbmodem1451 
 ```
 
 ### CLI Options
