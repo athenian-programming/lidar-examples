@@ -7,9 +7,18 @@ import plotly.graph_objs as go
 import plotly.plotly as py
 import plotly.tools as tls
 from common_constants import LOGGING_ARGS
+from common_utils import sleep
 
+from lidar_reader import ArduinoReader
 from lidar_reader import DEFAULT_BAUD
-from lidar_reader import LidarReader
+
+
+def plot_data(tup):
+    cms = int(tup[0])
+    inches = float(tup[1])
+    x = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
+    stream.write(dict(x=x, y=cms))
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -22,7 +31,7 @@ if __name__ == "__main__":
     # Setup logging
     logging.basicConfig(**LOGGING_ARGS)
 
-    lidar = LidarReader()
+    lidar = ArduinoReader()
 
     # Setup Plot.ly
     stream_ids = tls.get_credentials_file()['stream_ids']
@@ -44,14 +53,6 @@ if __name__ == "__main__":
     logging.info("Opened plot.ly stream")
     time.sleep(5)
 
-
-    def plot_data(tup):
-        cms = int(tup[0])
-        inches = float(tup[1])
-        x = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
-        stream.write(dict(x=x, y=cms))
-
-
     # Start consumer thread
     lidar.start_consumer(plot_data)
 
@@ -60,8 +61,7 @@ if __name__ == "__main__":
 
     # Wait for ctrl-C
     try:
-        while True:
-            time.sleep(60)
+        sleep()
     except KeyboardInterrupt:
         pass
     finally:
