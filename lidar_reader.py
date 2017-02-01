@@ -3,10 +3,10 @@
 import argparse
 import logging
 
-from arduino_reader import ArduinoReader
-from arduino_reader import DEFAULT_BAUD
 from common_constants import LOGGING_ARGS
 from common_utils import sleep
+from serial_reader import DEFAULT_BAUD
+from serial_reader import SerialReader
 
 
 def print_data(tuple):
@@ -27,14 +27,9 @@ if __name__ == "__main__":
     # Setup logging
     logging.basicConfig(**LOGGING_ARGS)
 
-    # Create LidarReader
-    lidar = ArduinoReader()
-
-    # Start consumer thread
-    lidar.start_consumer(print_data)
-
-    # Start producer thread
-    lidar.start_producer(args["serial"], baudrate=args["baud"])
+    # Run SerialReader
+    reader = SerialReader()
+    reader.start(print_data, args["serial"], baudrate=args["baud"])
 
     # Wait for ctrl-C
     try:
@@ -43,6 +38,6 @@ if __name__ == "__main__":
         pass
     finally:
         # Stop threads
-        lidar.stop()
+        reader.stop()
 
     print("Exiting...")

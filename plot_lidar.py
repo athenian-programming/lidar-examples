@@ -9,8 +9,8 @@ import plotly.tools as tls
 from common_constants import LOGGING_ARGS
 from common_utils import sleep
 
-from lidar_reader import ArduinoReader
 from lidar_reader import DEFAULT_BAUD
+from lidar_reader import SerialReader
 
 
 def plot_data(tup):
@@ -30,8 +30,6 @@ if __name__ == "__main__":
 
     # Setup logging
     logging.basicConfig(**LOGGING_ARGS)
-
-    lidar = ArduinoReader()
 
     # Setup Plot.ly
     stream_ids = tls.get_credentials_file()['stream_ids']
@@ -53,11 +51,9 @@ if __name__ == "__main__":
     logging.info("Opened plot.ly stream")
     time.sleep(5)
 
-    # Start consumer thread
-    lidar.start_consumer(plot_data)
-
-    # Start producer thread
-    lidar.start_producer(args["serial"], baudrate=args["baud"])
+    # Run SerialReader
+    reader = SerialReader()
+    reader.start(plot_data, args["serial"], baudrate=args["baud"])
 
     # Wait for ctrl-C
     try:
@@ -66,7 +62,7 @@ if __name__ == "__main__":
         pass
     finally:
         # Stop threads
-        lidar.stop()
+        reader.stop()
 
         # Shutdown Plot.ly
         stream.close()
