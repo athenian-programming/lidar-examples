@@ -21,15 +21,17 @@ class LidarReader(object):
         self.stopped = False
         self.data = None
 
-    def produce_data(self, port):
+    # Read data from serial port and pass it along to the consumer
+    # If the consumer runs slower than the producer, then values will be dropped
+    def produce_data(self, port, baudrate=115200):
         ser = None
         try:
             # Open serial port
-            ser = serial.Serial(port=port, baudrate=115200)
+            ser = serial.Serial(port=port, baudrate=baudrate)
 
             while not self.stopped:
                 try:
-                    # Read data from serial port
+                    # Read data from serial port.  Ignore the trailing two chars with [:-2]
                     bytes = ser.readline()[:-2]
 
                     # Update data with mutex
@@ -51,13 +53,15 @@ class LidarReader(object):
             if ser is not None:
                 ser.close()
 
+    # Consume data without doing a busy wait
+    # If the consumer runs faster than the producer, it will wait on self.event
     def consume_data(self, func):
         while not self.stopped:
             try:
                 # Wait for data
                 self.event.wait()
 
-                # Reset event
+                # Reset event to trigger wait on net iteration
                 self.event.clear()
 
                 # Read data with mutex
@@ -71,8 +75,8 @@ class LidarReader(object):
                 traceback.print_exc()
                 time.sleep(1)
 
-    def start_producer(self, port):
-        Thread(target=self.produce_data, args=(port,)).start()
+    def start_producer(self, port, baudrate=115200):
+        Thread(target=self.produce_data, args=(port, baudrate)).start()
 
     def start_consumer(self, func):
         Thread(target=self.consume_data, args=(func,)).start()
@@ -86,6 +90,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-s", "--serial", default="ttyACM0", type=str,
                         help="Arduino serial port [ttyACM0] (OSX is cu.usbmodemXXXX, Windows is COMX)")
+    parser.add_argument("-b", "--baud", default=115200, type=int, help="Arduino serial port baud rate [115200]")
     args = vars(parser.parse_args())
 
     # Setup logging
@@ -106,7 +111,7 @@ if __name__ == "__main__":
 
     # Start producer thread
     port = ("" if is_windows() else "/dev/") + args["serial"]
-    lidar.start_producer(port)
+    lidar.start_producer(port, baudrate=args["baud"])
 
     # Wait for ctrl-C
     try:
