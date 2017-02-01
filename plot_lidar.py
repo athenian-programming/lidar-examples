@@ -1,15 +1,15 @@
 import argparse
 import datetime
 import logging
-import sys
 import time
 
 import plotly.graph_objs as go
 import plotly.plotly as py
 import plotly.tools as tls
-import serial
 from common_constants import LOGGING_ARGS
 from common_utils import is_windows
+
+from lidar_reader import LidarReader
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -20,13 +20,9 @@ if __name__ == "__main__":
     # Setup logging
     logging.basicConfig(**LOGGING_ARGS)
 
-    try:
-        port = ("" if is_windows() else "/dev/") + args["serial"]
-        serial = serial.Serial(port=port, baudrate=115200)
-    except serial.serialutil.SerialException as e:
-        print(e)
-        sys.exit(0)
+    lidar = LidarReader()
 
+    # Setup Plot.ly
     stream_ids = tls.get_credentials_file()['stream_ids']
     stream_id = stream_ids[0]
 
@@ -40,30 +36,38 @@ if __name__ == "__main__":
     fig = go.Figure(data=data, layout=layout)
     py.plot(fig, filename='plot-positions')
 
-    # Write data
+    # Open stream
     stream = py.Stream(stream_id)
     stream.open()
-
-    logging.info("Opening plot.ly tab")
+    logging.info("Opened plot.ly stream")
     time.sleep(5)
 
 
+    def plot_data(tup):
+        cms = int(tup[0])
+        inches = float(tup[1])
+        x = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
+        stream.write(dict(x=x, y=cms))
+
+
+    # Start consumer thread
+    lidar.start_consumer(plot_data)
+
+    # Start producer thread
+    port = ("" if is_windows() else "/dev/") + args["serial"]
+    lidar.start_producer(port)
+
+    # Wait for ctrl-C
     try:
         while True:
-            try:
-                bytes = serial.readline()[:-2]
-                tup = eval(bytes.decode("utf-8"))
-                cms = int(tup[0])
-                inches = float(tup[1])
-                x = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
-                stream.write(dict(x=x, y=cms))
-            except BaseException as e:
-                print(e)
-                time.sleep(1)
+            time.sleep(60)
     except KeyboardInterrupt:
         pass
     finally:
+        # Stop threads
+        lidar.stop()
+
+        # Shutdown Plot.ly
         stream.close()
-        serial.close()
 
     print("Exiting...")
