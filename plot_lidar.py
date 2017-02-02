@@ -13,7 +13,8 @@ from lidar_reader import DEFAULT_BAUD
 from lidar_reader import SerialReader
 
 
-def plot_data(tup):
+def plot_data(str):
+    tup = eval(str)
     cms = int(tup[0])
     inches = float(tup[1])
     x = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')

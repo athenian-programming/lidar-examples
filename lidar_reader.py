@@ -9,9 +9,10 @@ from serial_reader import DEFAULT_BAUD
 from serial_reader import SerialReader
 
 
-def print_data(tuple):
-    cms = int(tuple[0])
-    inches = float(tuple[1])
+def print_data(str):
+    tup = eval(str)
+    cms = int(tup[0])
+    inches = float(tup[1])
     print(str(cms) + " : " + str(inches))
 
 
