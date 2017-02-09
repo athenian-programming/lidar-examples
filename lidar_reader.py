@@ -1,15 +1,13 @@
 #!/usr/bin/env python3
 
 import argparse
-import logging
 
-from common_constants import LOGGING_ARGS
-from common_utils import sleep
 from serial_reader import DEFAULT_BAUD
 from serial_reader import SerialReader
+from utils import sleep, setup_logging
 
 
-def print_data(tuple):
+def print_data(tuple, userdata):
     cms = int(tuple[0])
     inches = float(tuple[1])
     print(str(cms) + " : " + str(inches))
@@ -25,11 +23,11 @@ if __name__ == "__main__":
     args = vars(parser.parse_args())
 
     # Setup logging
-    logging.basicConfig(**LOGGING_ARGS)
+    setup_logging()
 
     # Run SerialReader
     reader = SerialReader()
-    reader.start(print_data, args["serial"], baudrate=args["baud"])
+    reader.start(print_data, port=args["serial"], baudrate=args["baud"])
 
     # Wait for ctrl-C
     try:
