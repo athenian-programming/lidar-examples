@@ -11,7 +11,7 @@ def print_data(str, userdata):
     tup = eval(str)
     cms = int(tup[0])
     inches = float(tup[1])
-    print(str(cms) + " : " + str(inches))
+    print("{0} cms - {1} inches".format(cms, inches))
 
 
 if __name__ == "__main__":
