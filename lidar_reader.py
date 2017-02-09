@@ -7,9 +7,10 @@ from serial_reader import SerialReader
 from utils import sleep, setup_logging
 
 
-def print_data(tuple, userdata):
-    cms = int(tuple[0])
-    inches = float(tuple[1])
+def print_data(str, userdata):
+    tup = eval(str)
+    cms = int(tup[0])
+    inches = float(tup[1])
     print(str(cms) + " : " + str(inches))
 
 
