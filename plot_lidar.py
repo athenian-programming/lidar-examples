@@ -53,8 +53,8 @@ if __name__ == "__main__":
     time.sleep(5)
 
     # Run SerialReader
-    reader = SerialReader()
-    reader.start(plot_data, args["serial"], baudrate=args["baud"])
+    reader = SerialReader(plot_data, port=args["serial"], baudrate=args["baud"])
+    reader.start()
 
     # Wait for ctrl-C
     try:

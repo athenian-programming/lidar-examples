@@ -27,8 +27,8 @@ if __name__ == "__main__":
     setup_logging()
 
     # Run SerialReader
-    reader = SerialReader()
-    reader.start(print_data, port=args["serial"], baudrate=args["baud"])
+    reader = SerialReader(print_data, port=args["serial"], baudrate=args["baud"])
+    reader.start()
 
     # Wait for ctrl-C
     try:
